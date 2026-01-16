@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<!-- OpenScoreBoard -- UDC TV Digital LAB -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenScoreBoard - Control</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- DSEG7 Font included in style.css -->
+</head>
+
+<body>
+
+    <div class="console-nav">
+        <a href="index.html">DASHBOARD</a>
+        <a href="control.html" class="active">CONTROL</a>
+        <a href="settings.html">SETTINGS</a>
+        <a href="display.html" target="_blank" style="margin-left:auto; color: #e74c3c;">OPEN DISPLAY &nearr;</a>
+    </div>
+
+    <div class="console-container">
+
+        <!-- TEAM A PANEL -->
+        <div class="panel team-panel" id="panel-a">
+            <h3>HOME</h3>
+            <div class="control-group">
+                <input type="text" id="teamA-name" value="HOME" style="text-align: center; width: 80%;">
+            </div>
+
+            <!-- SCORE -->
+            <div class="control-group">
+                <label>SCORE</label>
+                <div class="value-display" id="teamA-score">0</div>
+                <div class="btn-row">
+                    <button class="btn-orange" onclick="scoreboard.adjustScore('A', -1)">-1</button>
+                    <button onclick="scoreboard.adjustScore('A', 1)">+1</button>
+                    <button onclick="scoreboard.adjustScore('A', 2)">+2</button>
+                    <button onclick="scoreboard.adjustScore('A', 3)">+3</button>
+                </div>
+            </div>
+
+            <!-- FOULS -->
+            <div class="control-group">
+                <label>FOULS</label>
+                <div class="value-display" id="teamA-fouls">0</div>
+                <div class="btn-row">
+                    <button onclick="scoreboard.adjustFouls('A', -1)">-</button>
+                    <button onclick="scoreboard.adjustFouls('A', 1)">+</button>
+                </div>
+                <div style="margin-top: 10px;">
+                    <button id="btn-penalty-A" onclick="scoreboard.togglePenalty('A')">PENALTY</button>
+                </div>
+            </div>
+
+            <!-- TIMEOUTS -->
+            <div class="control-group">
+                <label>TIMEOUTS (Used / Max)</label>
+                <div class="value-display" id="teamA-timeouts">0 / 2</div>
+                <div class="btn-row">
+                    <button onclick="scoreboard.adjustTimeouts('A', -1)">-1</button>
+                    <button class="btn-orange" onclick="scoreboard.adjustTimeouts('A', 1)">+1</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CENTER PANEL (TIMER) -->
+        <div class="panel center-panel">
+            <h3>GAME CLOCK</h3>
+
+            <div class="value-display" id="main-timer" style="font-size: 4rem;">10:00</div>
+
+            <div class="btn-row">
+                <button class="btn-large btn-success" id="btn-start-stop"
+                    onclick="scoreboard.toggleTimer()">START</button>
+                <button class="btn-danger" onclick="scoreboard.resetTimerPhase()">RESET PHASE</button>
+            </div>
+
+            <div class="control-group">
+                <label>PERIOD: <span id="period-display">1</span></label>
+                <div class="btn-row">
+                    <button onclick="scoreboard.prevPhase()">&lt; PREV</button>
+                    <button onclick="scoreboard.nextPhase()">NEXT &gt;</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- TEAM B PANEL -->
+        <div class="panel team-panel" id="panel-b">
+            <h3>GUEST</h3>
+            <div class="control-group">
+                <input type="text" id="teamB-name" value="GUEST" style="text-align: center; width: 80%;">
+            </div>
+
+            <!-- SCORE -->
+            <div class="control-group">
+                <label>SCORE</label>
+                <div class="value-display" id="teamB-score">0</div>
+                <div class="btn-row">
+                    <button class="btn-orange" onclick="scoreboard.adjustScore('B', -1)">-1</button>
+                    <button onclick="scoreboard.adjustScore('B', 1)">+1</button>
+                    <button onclick="scoreboard.adjustScore('B', 2)">+2</button>
+                    <button onclick="scoreboard.adjustScore('B', 3)">+3</button>
+                </div>
+            </div>
+
+            <!-- FOULS -->
+            <div class="control-group">
+                <label>FOULS</label>
+                <div class="value-display" id="teamB-fouls">0</div>
+                <div class="btn-row">
+                    <button onclick="scoreboard.adjustFouls('B', -1)">-</button>
+                    <button onclick="scoreboard.adjustFouls('B', 1)">+</button>
+                </div>
+                <div style="margin-top: 10px;">
+                    <button id="btn-penalty-B" onclick="scoreboard.togglePenalty('B')">PENALTY</button>
+                </div>
+            </div>
+
+            <!-- TIMEOUTS -->
+            <div class="control-group">
+                <label>TIMEOUTS (Used / Max)</label>
+                <div class="value-display" id="teamB-timeouts">0 / 2</div>
+                <div class="btn-row">
+                    <button onclick="scoreboard.adjustTimeouts('B', -1)">-1</button>
+                    <button class="btn-orange" onclick="scoreboard.adjustTimeouts('B', 1)">+1</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Continuous UI update for cross-tab synchronization
+        setInterval(() => {
+            if (scoreboard) scoreboard.updateConsoleUI();
+        }, 100);
+
+        // Storage event listener for instant updates from other tabs
+        window.addEventListener('storage', () => {
+            if (scoreboard) {
+                scoreboard.loadState();
+                scoreboard.updateConsoleUI();
+            }
+        });
+    </script>
+</body>
+
+</html>

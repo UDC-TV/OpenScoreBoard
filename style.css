@@ -1,0 +1,560 @@
+/* Global Styles */
+/* OpenScoreBoard -- UDC TV Digital LAB */
+/* Stylesheet generated with Gemini 3 */
+@font-face {
+    font-family: 'DSEG7';
+    src: url('fonts/DSEG7.woff2') format('woff2');
+}
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --accent-color: #e74c3c;
+    --text-color: #ecf0f1;
+    --bg-color: #1a1a1a;
+    --panel-bg: #2d3436;
+    --running-color: #f1c40f;
+    /* Yellow */
+    --stopped-color: #ffffff;
+    /* White */
+    --font-primary: 'Arial', sans-serif;
+    --font-digital: 'DSEG7', monospace;
+    /* UPDATED FONT */
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-primary);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Console Styles (control.html / settings.html) --- */
+.console-nav {
+    background: #000;
+    padding: 10px 20px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.console-nav a {
+    color: #888;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+}
+
+.console-nav a.active {
+    color: white;
+    border-bottom: 2px solid white;
+}
+
+.console-container {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.panel {
+    background-color: var(--panel-bg);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.team-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.center-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+h2,
+h3 {
+    margin-top: 0;
+    text-align: center;
+    color: #bdc3c7;
+}
+
+.control-group {
+    margin-bottom: 15px;
+    width: 100%;
+    text-align: center;
+}
+
+.control-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #95a5a6;
+}
+
+.btn-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+button {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #4b5d6e;
+}
+
+button.active {
+    background-color: var(--accent-color);
+}
+
+button.btn-large {
+    font-size: 1.2rem;
+    padding: 15px 30px;
+}
+
+button.btn-success {
+    background-color: #27ae60;
+}
+
+button.btn-danger {
+    background-color: #c0392b;
+}
+
+button.btn-orange {
+    background-color: #d35400;
+    /* Darker orange for button */
+}
+
+button.btn-orange:hover {
+    background-color: #e67e22;
+}
+
+.value-display {
+    font-family: var(--font-digital);
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 10px 0;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    border-radius: 4px;
+    min-width: 80px;
+}
+
+input[type="text"],
+input[type="number"] {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid #555;
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+/* --- DISPLAY SPECIFIC STYLES --- */
+
+.display-body {
+    background: #000;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    height: 100vh;
+}
+
+.scoreboard-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    height: 100vh;
+    gap: 0;
+    justify-items: center;
+}
+
+/* Pro Mode: 3-column layout with roster columns */
+.scoreboard-layout.pro-mode {
+    grid-template-columns: 1fr 2fr 1fr;
+    justify-items: stretch;
+}
+
+/* Hide roster columns when NOT in Pro Mode */
+.scoreboard-layout:not(.pro-mode) .roster-column {
+    display: none !important;
+}
+
+/* Center column takes full width in standard mode */
+.scoreboard-layout:not(.pro-mode) .center-column {
+    max-width: 1400px;
+    width: 100%;
+}
+
+/* ROSTER COLUMNS (LEFT & RIGHT) */
+.roster-column {
+    background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+    padding: 1.5vw;
+}
+
+.roster-table {
+    width: 100%;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.roster-table thead {
+    background: rgba(255, 255, 255, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.roster-table th {
+    padding: 1vw 0.5vw;
+    text-align: center;
+    color: #fff;
+    font-size: 1.4vw;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-bottom: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.roster-table td {
+    padding: 0.8vw 0.5vw;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.roster-number {
+    font-weight: bold;
+    font-size: 2.2vw;
+    width: 20%;
+    font-family: 'DSEG7', monospace;
+    color: #FFC107;
+}
+
+.roster-name {
+    text-align: left;
+    width: 45%;
+    font-size: 1.5vw;
+    padding-left: 1vw;
+    font-family: 'Orbitron', sans-serif;
+    color: #fff;
+}
+
+.roster-stat {
+    font-weight: bold;
+    font-size: 2vw;
+    width: 17.5%;
+    font-family: 'DSEG7', monospace;
+}
+
+/* CENTER COLUMN */
+.center-column {
+    background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2vw;
+}
+
+/* TEAM STATS ROW - Main container for both teams */
+.team-stats-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 3vw;
+    align-items: center;
+    margin-bottom: 3vw;
+}
+
+/* TEAM STATS CONTAINER - Colored rectangle for each team */
+.team-stats-container {
+    background: rgba(0, 0, 0, 0.4);
+    border: 0.4vw solid #e74c3c;
+    border-radius: 1.5vw;
+    padding: 2vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5vw;
+}
+
+/* Team-specific border colors (set dynamically via JS) */
+#disp-teamA-container {
+    border-color: #e74c3c;
+}
+
+#disp-teamB-container {
+    border-color: #3498db;
+}
+
+.team-name {
+    font-size: 2.5vw;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-family: 'Orbitron', sans-serif;
+    color: #fff;
+    text-align: center;
+}
+
+.score-value {
+    font-size: 14vw;
+    font-family: 'DSEG7', monospace;
+    color: #ffffff;
+    line-height: 1;
+    text-align: center;
+}
+
+/* Grid for fouls and timeouts within each team container */
+.team-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2vw;
+    width: 100%;
+}
+
+.timer-section {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2vw;
+    border-radius: 1vw;
+    margin-top: 3vw;
+}
+
+.timer-value {
+    font-size: 8vw;
+    font-family: 'DSEG7', monospace;
+    color: #fff;
+}
+
+.period-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1vw;
+}
+
+.period-value {
+    font-size: 4vw;
+    font-family: 'DSEG7', monospace;
+    color: #FFC107;
+    font-weight: bold;
+}
+
+.period-label {
+    font-size: 1.5vw;
+    color: #888;
+    font-family: 'Orbitron', sans-serif;
+}
+
+/* Legacy stats-row - now unused but kept for compatibility */
+.stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr;
+    gap: 1.5vw;
+    align-items: center;
+    margin-bottom: 2vw;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 1.2vw;
+    color: #888;
+    text-transform: uppercase;
+    font-family: 'Orbitron', sans-serif;
+    display: block;
+    margin-bottom: 0.5vw;
+}
+
+.stat-value {
+    font-size: 4vw;
+    font-family: 'DSEG7', monospace;
+    color: #FFC107;
+    font-weight: bold;
+}
+
+.penalty-indicator {
+    background-color: #f44336;
+    width: 3vw;
+    height: 6vw;
+    display: none;
+    margin: 0.5vw auto;
+}
+
+.penalty-indicator.visible {
+    display: block;
+}
+
+.timeout-dots-container {
+    display: flex;
+    gap: 0.5vw;
+    justify-content: center;
+    margin-top: 0.5vw;
+}
+
+.dot {
+    width: 2.5vw;
+    height: 2.5vw;
+    border-radius: 50%;
+    background-color: #444;
+}
+
+.dot.used {
+    background-color: #FFC107;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* For simplicity, we might just toggle visibility if reqs imply "show available" 
+   But user said: "grey = available, yellow = requested".
+   This implies we see ALL slots. 
+   If 3 slots total: used 1 -> (Yellow) (Grey) (Grey).
+   Wait, "yellow every time out REQUESTED".
+   Let's assume standard behavior:
+   Total slots displayed = Matches max for period.
+   Status: Used=Yellow, Unused=Grey.
+*/
+
+.timer-value {
+    font-family: var(--font-digital);
+    font-size: 12vw;
+    line-height: 1;
+    color: var(--stopped-color);
+}
+
+.timer-value.running {
+    color: var(--running-color);
+}
+
+.period-value {
+    font-size: 8vw;
+    color: #2ecc71;
+    font-weight: bold;
+    font-family: var(--font-digital);
+}
+
+.period-label {
+    font-size: 2vw;
+    color: #aaa;
+}
+
+.period-container {
+    text-align: center;
+    margin-top: 10vw;
+}
+
+
+/* Settings Page Specific */
+.settings-container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: var(--panel-bg);
+    padding: 30px;
+    border-radius: 8px;
+}
+
+.settings-group {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #444;
+}
+
+.time-adjust-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1.5rem;
+}
+
+.time-input {
+    width: 80px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+/* Pro Stats Mode */
+.pro-container {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.pro-teams {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.roster-panel {
+    background: var(--panel-bg);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.player-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 120px 120px 100px;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    margin-bottom: 5px;
+    border-radius: 4px;
+}
+
+.player-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.player-stats {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.stat-btn {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+}
+
+.add-player-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.team-totals {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    text-align: center;
+    font-size: 1.2rem;
+}

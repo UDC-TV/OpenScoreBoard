@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<!-- OpenScoreBoard -- UDC TV Digital LAB -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenScoreBoard - Pro Stats</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="console-nav">
+        <a href="index.html">DASHBOARD</a>
+        <a href="control.html">Match</a>
+        <a href="prostats.html" class="active">Pro Stats</a>
+        <a href="settings.html">Settings</a>
+    </div>
+
+    <div class="pro-container">
+        <h2>PRO MODE - PLAYER STATISTICS</h2>
+
+        <div class="pro-teams">
+            <!-- Team A -->
+            <div class="roster-panel">
+                <h3 id="teamA-title">HOME</h3>
+                <div id="teamA-roster"></div>
+                <div class="add-player-form">
+                    <input type="number" id="add-numA" placeholder="#" style="width: 60px;">
+                    <input type="text" id="add-nameA" placeholder="Surname I.">
+                    <button onclick="addPlayerA()">Add Player</button>
+                </div>
+                <div class="team-totals">
+                    Team Totals: <span id="teamA-total-pts">0</span> PTS, <span id="teamA-total-fouls">0</span> F
+                </div>
+            </div>
+
+            <!-- Team B -->
+            <div class="roster-panel">
+                <h3 id="teamB-title">GUEST</h3>
+                <div id="teamB-roster"></div>
+                <div class="add-player-form">
+                    <input type="number" id="add-numB" placeholder="#" style="width: 60px;">
+                    <input type="text" id="add-nameB" placeholder="Surname I.">
+                    <button onclick="addPlayerB()">Add Player</button>
+                </div>
+                <div class="team-totals">
+                    Team Totals: <span id="teamB-total-pts">0</span> PTS, <span id="teamB-total-fouls">0</span> F
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        function addPlayerA() {
+            const num = document.getElementById('add-numA').value;
+            const name = document.getElementById('add-nameA').value;
+            if (num && name) {
+                console.log('Adding player A:', num, name);
+                scoreboard.addPlayer('A', num, name);
+                document.getElementById('add-numA').value = '';
+                document.getElementById('add-nameA').value = '';
+                alert(`Player #${num} ${name} added to HOME`);
+                updateUI();
+            } else {
+                alert('Please enter both number and name');
+            }
+        }
+
+        function addPlayerB() {
+            const num = document.getElementById('add-numB').value;
+            const name = document.getElementById('add-nameB').value;
+            if (num && name) {
+                console.log('Adding player B:', num, name);
+                scoreboard.addPlayer('B', num, name);
+                document.getElementById('add-numB').value = '';
+                document.getElementById('add-nameB').value = '';
+                alert(`Player #${num} ${name} added to GUEST`);
+                updateUI();
+            } else {
+                alert('Please enter both number and name');
+            }
+        }
+
+        function renderRoster(team) {
+            const teamObj = scoreboard.gameState['team' + team];
+            const container = document.getElementById(`team${team}-roster`);
+
+            // Sort by number
+            const sorted = [...teamObj.players].sort((a, b) => a.number - b.number);
+
+            let html = '';
+            sorted.forEach(player => {
+                html += `
+                    <div class="player-row">
+                        <div class="player-number">${player.number}</div>
+                        <div>${player.name}</div>
+                        <div class="player-stats">
+                            <span style="font-size: 0.8rem; color: #888; margin-right: 5px;">PTS</span>
+                            <button class="stat-btn" onclick="scoreboard.adjustPlayerPoints('${team}', ${player.id}, -1);updateUI();">-</button>
+                            <span style="width: 30px; text-align: center; font-weight: bold;">${player.points}</span>
+                            <button class="stat-btn btn-success" onclick="scoreboard.adjustPlayerPoints('${team}', ${player.id}, 1); updateUI();">+</button>
+                        </div>
+                        <div class="player-stats">
+                            <span style="font-size: 0.8rem; color: #888; margin-right: 5px;">F</span>
+                            <button class="stat-btn" onclick="scoreboard.adjustPlayerFouls('${team}', ${player.id}, -1); updateUI();">-</button>
+                            <span style="width: 30px; text-align: center; font-weight: bold;">${player.fouls}</span>
+                            <button class="stat-btn btn-success" onclick="scoreboard.adjustPlayerFouls('${team}', ${player.id}, 1); updateUI();">+</button>
+                        </div>
+                        <button class="stat-btn btn-danger" onclick="removePlayer('${team}', ${player.id})">🗑️</button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html || '<p style="text-align:center; color: #666;">No players added</p>';
+
+            // Update totals
+            document.getElementById(`team${team}-total-pts`).textContent = teamObj.score;
+            document.getElementById(`team${team}-total-fouls`).textContent = teamObj.fouls;
+        }
+
+        function removePlayer(team, playerId) {
+            if (confirm('Remove this player?')) {
+                scoreboard.removePlayer(team, playerId);
+                updateUI();
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('teamA-title').textContent = scoreboard.gameState.teamA.name;
+            document.getElementById('teamB-title').textContent = scoreboard.gameState.teamB.name;
+            renderRoster('A');
+            renderRoster('B');
+        }
+
+        // Storage event for instant cross-tab updates
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'osb_state') {
+                scoreboard.loadState();
+            }
+        });
+
+        setInterval(() => {
+            // scoreboard.loadState();
+            updateUI();
+        }, 10000);
+
+        // Initial render
+        updateUI();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<!-- OpenScoreBoard -- UDC TV Digital LAB -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenScoreBoard - Display</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="display-body">
+
+    <div class="scoreboard-layout">
+
+        <!-- LEFT: HOME ROSTER -->
+        <div id="disp-teamA-roster" class="roster-column" style="display: none;">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- CENTER: SCORES & TIMER -->
+        <div class="center-column">
+            <!-- 1. TEAM STATS CONTAINERS WITH SCORES -->
+            <div class="team-stats-row">
+                <!-- TEAM A CONTAINER -->
+                <div class="team-stats-container" id="disp-teamA-container">
+                    <div class="team-name" id="disp-teamA-name">HOME</div>
+                    <div class="score-value" id="disp-teamA-score">0</div>
+                    <div class="team-stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">FOULS</span>
+                            <span class="stat-value" id="disp-teamA-fouls">0</span>
+                            <div class="penalty-indicator" id="disp-teamA-penalty"></div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">TIMEOUTS</span>
+                            <div class="timeout-dots-container" id="disp-teamA-todots"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PERIOD IN CENTER -->
+                <div class="period-info">
+                    <span class="period-value" id="disp-period">1</span>
+                </div>
+
+                <!-- TEAM B CONTAINER -->
+                <div class="team-stats-container" id="disp-teamB-container">
+                    <div class="team-name" id="disp-teamB-name">GUEST</div>
+                    <div class="score-value" id="disp-teamB-score">0</div>
+                    <div class="team-stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">FOULS</span>
+                            <span class="stat-value" id="disp-teamB-fouls">0</span>
+                            <div class="penalty-indicator" id="disp-teamB-penalty"></div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">TIMEOUTS</span>
+                            <div class="timeout-dots-container" id="disp-teamB-todots"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. GAME TIMER -->
+            <div class="timer-section">
+                <div class="timer-value" id="disp-timer">10:00</div>
+            </div>
+        </div>
+
+        <!-- RIGHT: GUEST ROSTER -->
+        <div id="disp-teamB-roster" class="roster-column" style="display: none;">
+            <!-- Populated by JS -->
+        </div>
+
+    </div>
+
+    <script>
+        function updateDisplay() {
+            const raw = localStorage.getItem('osb_state');
+            if (!raw) return;
+
+            const state = JSON.parse(raw);
+
+            // --- DYNAMIC LAYOUT: Toggle between Pro Mode and Standard Mode ---
+            const layoutEl = document.querySelector('.scoreboard-layout');
+            if (state.settings.proMode) {
+                layoutEl.classList.add('pro-mode');
+            } else {
+                layoutEl.classList.remove('pro-mode');
+            }
+
+            // --- TIMER ---
+            // Calculate current time from absolute timestamps
+            let seconds = state.currentTime;
+
+            // If timer is running, calculate precise time independently
+            if (state.isRunning && state.startTimestamp) {
+                const timeRunningNow = (Date.now() - state.startTimestamp) / 1000;
+                seconds = Math.max(0, state.phaseStartTime - state.elapsedTime - timeRunningNow);
+            }
+
+            let timeStr;
+            if (seconds <= 0) timeStr = '0.0';
+            else if (seconds < 60) timeStr = seconds.toFixed(1);
+            else {
+                const m = Math.floor(seconds / 60);
+                const s = Math.floor(seconds % 60);
+                timeStr = `${m}:${s.toString().padStart(2, '0')}`;
+            }
+
+            const timerEl = document.getElementById('disp-timer');
+            timerEl.textContent = timeStr;
+            if (state.isRunning) timerEl.classList.add('running');
+            else timerEl.classList.remove('running');
+
+
+            // --- PERIOD ---
+            // Simplified period display logic
+            const currentPhase = state.settings.phases[state.phaseIndex];
+            let displayPeriod = "1";
+            let periodColor = "#ffffff"; // Default White
+
+            if (currentPhase) {
+                // Color Logic: Period = Yellow (running-color), Interval = White
+                if (currentPhase.type === 'period') {
+                    periodColor = 'var(--running-color)';
+                }
+
+                let pVal = Math.floor(state.phaseIndex / 2) + 1;
+                if (pVal > 4) displayPeriod = "OT" + (pVal - 4);
+                else displayPeriod = pVal.toString();
+            }
+            const pEl = document.getElementById('disp-period');
+            pEl.textContent = displayPeriod;
+            pEl.style.color = periodColor;
+
+            // --- TEAMS ---
+            updateTeam('A', state);
+            updateTeam('B', state);
+        }
+
+        function updateTeam(team, state) {
+            const data = state['team' + team];
+            const maxFouls = state.settings.maxFouls;
+
+            // Apply team color to container border
+            const container = document.getElementById(`disp-team${team}-container`);
+            if (container) {
+                container.style.borderColor = data.color || (team === 'A' ? '#e74c3c' : '#3498db');
+            }
+
+            document.getElementById(`disp-team${team}-name`).textContent = data.name;
+            document.getElementById(`disp-team${team}-score`).textContent = data.score;
+
+            // Fouls / Penalty
+            const foulsEl = document.getElementById(`disp-team${team}-fouls`);
+            const penEl = document.getElementById(`disp-team${team}-penalty`);
+            const isPenalty = data.fouls >= maxFouls || data.isPenaltyManual;
+
+            if (isPenalty) {
+                foulsEl.style.display = 'none';
+                penEl.style.display = 'block';
+            } else {
+                foulsEl.style.display = 'block';
+                foulsEl.textContent = data.fouls;
+                penEl.style.display = 'none';
+            }
+
+            // Timeouts (Dots)
+            const dotsContainer = document.getElementById(`disp-team${team}-todots`);
+            const maxTO = data.timeoutsMax || 2;
+            const usedTO = data.timeoutsUsed || 0;
+
+            // Rebuild dots only if count/state changed to avoid flicker? 
+            // Setting innerHTML is cheap enough here.
+
+            /*
+              User Logic: "visualizza con dei pallini grigi i time out a disposizione e con un pallino giallo ogni time out richiesto *di quelli a disposizione*."
+              
+              Example: Max 2. Used 1.
+              Remaining Available = 1 (Grey).
+              Requested (Used) = 1 (Yellow).
+              Total dots shown = Max (2).
+              Order? Yellow first? Yes usually.
+              [Yellow] [Grey]
+            */
+
+            let html = '';
+            for (let i = 0; i < maxTO; i++) {
+                if (i < usedTO) {
+                    html += '<div class="dot used"></div>';
+                } else {
+                    html += '<div class="dot"></div>';
+                }
+            }
+            dotsContainer.innerHTML = html;
+
+            // PRO MODE: Render player roster
+            if (state.settings.proMode) {
+                renderRoster(team, data, state.settings.maxPlayerFouls);
+            }
+        }
+
+        function renderRoster(team, data, maxPlayerFouls) {
+            const container = document.getElementById(`disp-team${team}-roster`);
+
+            // Safety check: ensure players array exists
+            if (!data.players || !Array.isArray(data.players) || data.players.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+
+            const sorted = [...data.players].sort((a, b) => a.number - b.number);
+
+            let html = '<table class="roster-table"><thead><tr><th>#</th><th>NAME</th><th>PTS</th><th>F</th></tr></thead><tbody>';
+            sorted.forEach(player => {
+                const ptsColor = player.points > 0 ? '#2ecc71' : '#ffffff';
+                const foulsColor = player.fouls >= maxPlayerFouls ? '#e74c3c' : '#f1c40f';
+                html += `
+                    <tr>
+                        <td class="roster-number">${player.number}</td>
+                        <td class="roster-name">${player.name}</td>
+                        <td class="roster-stat" style="color: ${ptsColor}">${player.points}</td>
+                        <td class="roster-stat" style="color: ${foulsColor}">${player.fouls}</td>
+                    </tr>
+                `;
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        window.addEventListener('storage', updateDisplay);
+        setInterval(updateDisplay, 16); // 60fps for smooth, precise updates
+        updateDisplay();
+    </script>
+</body>
+
+</html>

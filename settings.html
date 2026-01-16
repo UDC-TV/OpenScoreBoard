@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<!-- OpenScoreBoard -- UDC TV Digital LAB -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenScoreBoard - Settings</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="console-nav">
+        <a href="index.html">DASHBOARD</a>
+        <a href="control.html">CONTROL</a>
+        <a href="settings.html" class="active">SETTINGS</a>
+        <a href="display.html" target="_blank" style="margin-left:auto; color: #e74c3c;">OPEN DISPLAY &nearr;</a>
+    </div>
+
+    <div class="settings-container">
+        <h2>Configuration & Adjustments</h2>
+
+        <div class="settings-group">
+            <h3>Adjust Game Clock</h3>
+            <p style="color: #888; text-align: center; margin-bottom: 20px;">Use this to correct timer mistakes. Enter
+                values and click Set.</p>
+
+            <div class="time-adjust-row">
+                <input type="number" id="adjust-min" class="time-input" placeholder="MM" min="0" max="99">
+                <span>:</span>
+                <input type="number" id="adjust-sec" class="time-input" placeholder="SS" min="0" max="59">
+                <span>.</span>
+                <input type="number" id="adjust-tenth" class="time-input" placeholder="t" min="0" max="9">
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn-large btn-success" onclick="applyTime()">SET TIME</button>
+            </div>
+        </div>
+
+        <div class="settings-group">
+            <h3>Pro Mode</h3>
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" id="setting-pro-mode">
+                    Enable Pro Mode (Player Statistics)
+                </label>
+            </div>
+            <div class="control-group">
+                <label>Max Player Fouls (Red at this value)</label>
+                <input type="number" id="setting-max-player-fouls" value="5">
+            </div>
+        </div>
+
+        <div class="settings-group">
+            <h3>Display Colors</h3>
+            <div class="control-group">
+                <label>HOME Color</label>
+                <input type="color" id="setting-color-a" value="#e74c3c">
+            </div>
+            <div class="control-group">
+                <label>GUEST Color</label>
+                <input type="color" id="setting-color-b" value="#3498db">
+            </div>
+        </div>
+
+        <div class="settings-group">
+            <h3>Rule Settings</h3>
+
+            <div class="control-group">
+                <label>Max Team Fouls (Penalty Threshold)</label>
+                <input type="number" id="setting-max-fouls" value="5">
+                <p style="text-align: center; font-size: 0.8rem; color: #666;">Standard: 5 (FIBA), 6 (NBA)</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn-large btn-success" onclick="applySettings()">APPLY SETTINGS</button>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Initialize settings UI from current state
+        function updateSettingsUI() {
+            const state = scoreboard.gameState;
+            document.getElementById('setting-pro-mode').checked = state.settings.proMode || false;
+            document.getElementById('setting-max-player-fouls').value = state.settings.maxPlayerFouls || 5;
+            document.getElementById('setting-color-a').value = state.teamA.color || '#e74c3c';
+            document.getElementById('setting-color-b').value = state.teamB.color || '#3498db';
+            document.getElementById('setting-max-fouls').value = state.settings.maxFouls || 5;
+        }
+
+        function applySettings() {
+            scoreboard.updateSettings();
+            alert('Settings Applied!');
+        }
+
+        function applyTime() {
+            const mins = document.getElementById('adjust-min').value;
+            const secs = document.getElementById('adjust-sec').value;
+            const tenths = document.getElementById('adjust-tenth').value;
+
+            // Validate basic inputs
+            if (mins === '' && secs === '' && tenths === '') {
+                alert('Please enter a time value');
+                return;
+            }
+
+            scoreboard.setTimeComponents(mins, secs, tenths);
+            alert('Time Updated');
+
+            // Clear inputs
+            document.getElementById('adjust-min').value = '';
+            document.getElementById('adjust-sec').value = '';
+            document.getElementById('adjust-tenth').value = '';
+        }
+
+        // Load current settings on page load
+        updateSettingsUI();
+    </script>
+</body>
+
+</html>

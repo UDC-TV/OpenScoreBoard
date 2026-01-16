@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!-- OpenScoreBoard -- UDC TV Digital LAB -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenScoreBoard - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: var(--bg-color);
+            gap: 30px;
+        }
+
+        .nav-card {
+            background-color: var(--panel-bg);
+            padding: 30px;
+            border-radius: 12px;
+            width: 300px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            text-decoration: none;
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px);
+            background-color: #3e484a;
+            border-color: #555;
+        }
+
+        .nav-card h2 {
+            margin: 0 0 10px 0;
+            color: #ecf0f1;
+        }
+
+        .nav-card p {
+            color: #bdc3c7;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <h1 style="color: var(--running-color);">OPEN SCOREBOARD</h1>
+
+        <a href="control.html" class="nav-card">
+            <h2>BASIC MODE</h2>
+            <p>Main match controller</p>
+        </a>
+
+        <a href="prostats.html" class="nav-card">
+            <h2>PRO MODE</h2>
+            <p>Player roster & individual statistics</p>
+        </a>
+
+        <a href="settings.html" class="nav-card">
+            <h2>SETTINGS & TIME</h2>
+            <p>Adjust timer, periods, configuration</p>
+        </a>
+
+        <a href="display.html" target="_blank" class="nav-card" style="border-color: var(--accent-color);">
+            <h2>OPEN DISPLAY</h2>
+            <p>Launch Public Scoreboard</p>
+        </a>
+    </div>
+</body>
+
+</html>
