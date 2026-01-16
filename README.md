@@ -1,7 +1,7 @@
-# openScoreBoard
-🇬🇧 openScoreBoard is a web app to manage and customize a digital basketball scoreboard. The project, still in alpha, is designed both for training purposes and for tournament matches. Hardware not provided.
+# OpenScoreBoard
+🇬🇧 OpenScoreBoard is a web app to manage and customize a digital basketball scoreboard. The project, still in alpha, is designed both for training purposes and for tournament matches. Hardware not provided.
 
-🇮🇹 openScoreBoard è una web app per gestire e personalizzare un tabellone segnapunti digitale per basket. Il progetto, ancora in fase alpha, è pensato sia per scopi di allenamento che per partite di torneo. Hardware non fornito.
+🇮🇹 OpenScoreBoard è una web app per gestire e personalizzare un tabellone segnapunti digitale per basket. Il progetto, ancora in fase alpha, è pensato sia per scopi di allenamento che per partite di torneo. Hardware non fornito.
 
 # Guida super rapida
 
